@@ -14,10 +14,10 @@ var yodatepicker = function(options) {
     };
 
     var FA_CURRENCY_ICONS = {
-        'USD': '<i class="fa fa-usd"></i>',
-        'CAD': '<i class="fa fa-dollar"></i>',
-        'EUR': '<i class="fa fa-eur"></i>',
-        'MXN': '<i class="fa fa-dollar"></i>'
+        'USD': '<i class="fa fa-dollar-sign"></i>',
+        'CAD': '<i class="fa fa-dollar-sign"></i>',
+        'EUR': '<i class="fa fa-euro-sign"></i>',
+        'MXN': '<i class="fa fa-dollar-sign"></i>'
     };
 
     var configure = function(opts) {
