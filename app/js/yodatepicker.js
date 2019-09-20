@@ -87,6 +87,9 @@ var yodatepicker = function(options) {
             // The current date.
             currdate: new Date(),
 
+            // Format the date that is put in the DOM with put_date_DOM().
+            display_date_format: opts.display_date_format || '',
+
             // CSS class used for previous and next navigation (fontawesome).
             prev_fa_class: opts.prev_fa_class || '',
             next_fa_class: opts.next_fa_class || '',
@@ -442,14 +445,20 @@ var yodatepicker = function(options) {
         var the_month = (_mm < 10) ? '0' + _mm : _mm.toString();
         var the_day   = (_dd < 10) ? '0' + _dd : _dd.toString();
 
-        /* jshint evil: true */
-        if(cfg.locale === 'en') {
-            eval('document.getElementById("' + elem + '").value=' +
-                 'the_month + "/" + the_day + "/" + _yy');
-        } else {
-            eval('document.getElementById("' + elem + '").value=' +
-                 'the_day + "/" + the_month + "/" + _yy');
+        var formatted_date = (cfg.locale === 'en') ?
+                             'the_month + "/" + the_day + "/" + _yy' :
+                             'the_day + "/" + the_month + "/" + _yy'
+
+        if(cfg.display_date_format === 'ddd, MMM Do') {
+            /* example: Fri, Oct 31 */
+            var d = raw2date((_mm -1) + '_' + _dd + '_' + _yy); // _mm -1 because we added one above
+            var dow = dow_short_names(cfg.locale)[d.getDay()];
+            var mmm = get_month_names(cfg.locale)[d.getMonth()].substr(0, 3);
+            formatted_date = dow + ', ' + mmm + ' ' + _dd;
         }
+
+        /* jshint evil: true */
+        eval('document.getElementById("' + elem + '").value="' + formatted_date + '"');
         /* jshint evil: false */
     };
 
