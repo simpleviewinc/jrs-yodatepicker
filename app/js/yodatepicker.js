@@ -449,12 +449,12 @@ var yodatepicker = function(options) {
                              'the_month + "/" + the_day + "/" + _yy' :
                              'the_day + "/" + the_month + "/" + _yy'
 
-        if(cfg.display_date_format === 'ddd, MMM Do') {
-            /* example: Fri, Oct 31 */
+        if(cfg.display_date_format === 'ddd, MMM Do, YYYY') {
+            /* example: Fri, Oct 31, 2019 */
             var d = raw2date((_mm -1) + '_' + _dd + '_' + _yy); // _mm -1 because we added one above
             var dow = dow_short_names(cfg.locale)[d.getDay()];
             var mmm = get_month_names(cfg.locale)[d.getMonth()].substr(0, 3);
-            formatted_date = dow + ', ' + mmm + ' ' + _dd;
+            formatted_date = dow + ', ' + mmm + ' ' + _dd + ', ' + _yy;
         }
 
         /* jshint evil: true */
