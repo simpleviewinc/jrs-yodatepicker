@@ -1154,7 +1154,8 @@ var yodatepicker = function(options) {
             if(!root_node) { throw new YoException(root_node); }
 
             if(document.getElementById(yo_id)) {
-                remove_element(root_node, yo_id);
+                try { remove_element(root_node, yo_id); }
+                catch(e) { /* exception caught; yo_id is not a child of root_node */ }
             }
 
             var td_node = root_node
