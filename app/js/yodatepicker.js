@@ -446,8 +446,8 @@ var yodatepicker = function(options) {
         var the_day   = (_dd < 10) ? '0' + _dd : _dd.toString();
 
         var formatted_date = (cfg.locale === 'en') ?
-                             'the_month + "/" + the_day + "/" + _yy' :
-                             'the_day + "/" + the_month + "/" + _yy'
+                             the_month + "/" + the_day + "/" + _yy :
+                             the_day + "/" + the_month + "/" + _yy;
 
         if(cfg.display_date_format === 'ddd, MMM Do, YYYY') {
             /* example: Fri, Oct 31, 2019 */
