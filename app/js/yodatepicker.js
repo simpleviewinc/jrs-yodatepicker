@@ -183,23 +183,32 @@ var yodatepicker = function(options) {
             // NOTE: key is formatted like '0_25_2015' so here we'll
             // reformat that to look like '2015-01-25'.
 
-            var build_item = function(value) {
+            var build_item = function(data) {
+                // data is an object { rate: '13.99', los: '2' }
                 if(!cfg.use_custom_content) {
-                    var rate = value ? parseFloat(value.toString()) : undefined;
+                    var rate = data.rate ? parseFloat(data.rate.toString()) : undefined;
+                    var los = data.los ? parseInt(data.los.toString()) : undefined;
 
                     if(isNaN(rate) || rate < 1 ) {
                         return '<div class="yo-rate-item">N/A</div>';
                     }
-                    var currency_icon = FA_CURRENCY_ICONS[cfg.currency_code];
-                    return '<div class="yo-rate-item">' + currency_icon + value + '</div>';
+
+                    var los_elem = '<div class="yo-los-item">&nbsp;</div>';
+                    if(los && los > 1) {
+                        // length of stay is greater than 1
+                        los_elem = '<div class="yo-los-item">*</div>';
+                    }
+
+                    var currency_icon = FA_CURRENCY_ICONS[cfg.currency_code.toUpperCase()];
+                    return los_elem + '<div class="yo-rate-item">' + currency_icon + data.rate + '</div>';
                 }
                 else {
-                    return '<div class="yo-rate-item">' + value + '</div>';
+                    return '<div class="yo-rate-item">' + data.rate + '</div>';
                 }
             };
 
             var items = key.split('_');
-            if(!items) { return build_item('N/A'); }
+            if(!items) { return build_item( { rate: 'N/A' } ); }
 
             items[0] = parseInt(items[0], 10) + 1;
             var key_month = (items[0] < 10) ? ('0' + items[0]) : items[0];
@@ -211,14 +220,15 @@ var yodatepicker = function(options) {
             // which is one year of rates.
             for(var i = 0; i < cfg.cell_content.length; i++) {
                 if(cfg.cell_content[i].date === content_date) {
-                    var value = cfg.cell_content[i].data;
-                    return build_item(value);
+                    var rate = cfg.cell_content[i].data;
+                    var los = cfg.cell_content[i].los;
+                    return build_item( { rate: rate, los: los } );
                 }
             }
             if(cfg.use_custom_content) {
-                return build_item('');
+                return build_item( { rate: '' } );
             } else {
-                return build_item('N/A');
+                return build_item( { rate: 'N/A' } );
             }
         },
 

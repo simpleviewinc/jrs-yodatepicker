@@ -324,6 +324,12 @@
 .yo-rate-item {
     position: relative;
     color: #0000cd;
-    top: 16px;
+    top: 4px;
+}
+
+.yo-los-item {
+    position: relative;
+    top: -15px;
+    left: 42px;
 }
 
