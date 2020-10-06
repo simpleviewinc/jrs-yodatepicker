@@ -66,6 +66,9 @@ var yodatepicker = function(options) {
              // the data through as is
              use_custom_content: opts.use_custom_content || false,
 
+            //
+            custom_content_default: opts.custom_content_default || '',
+
             currency_code: opts.currency_code || 'USD',
 
             // Sets the day of week name: single_name, short_name, full_name.
@@ -177,58 +180,48 @@ var yodatepicker = function(options) {
         offset: 0,
 
         jrs_more_content: function(key) {
+            // The param `key` is a string formatted like '0_25_2015'.
             // Returns the content for a cell if it is present.
-            // Otherwise return an alternate string.
-            //
-            // NOTE: key is formatted like '0_25_2015' so here we'll
-            // reformat that to look like '2015-01-25'.
-
-            var build_item = function(data) {
-                // data is an object { rate: '13.99', los: '2' }
+            var build_item = function(obj) {
                 if(!cfg.use_custom_content) {
-                    var rate = data.rate ? parseFloat(data.rate.toString()) : undefined;
-                    var los = data.los ? parseInt(data.los.toString()) : undefined;
-
-                    if(isNaN(rate) || rate < 1 ) {
-                        return '<div class="yo-rate-item">N/A</div>';
-                    }
-
-                    var los_elem = '<div class="yo-los-item">&nbsp;</div>';
-                    if(los && los > 1) {
-                        // length of stay is greater than 1
-                        los_elem = '<div class="yo-los-item">*</div>';
-                    }
-
-                    var currency_icon = FA_CURRENCY_ICONS[cfg.currency_code.toUpperCase()];
-                    return los_elem + '<div class="yo-rate-item">' + currency_icon + data.rate + '</div>';
+                    return '<div class="yo-rate-item">' + obj.data + '</div>';
                 }
                 else {
-                    return '<div class="yo-rate-item">' + data.rate + '</div>';
+                    var default_content = cfg.custom_content_default;
+                    var data = obj.data;
+
+                    if (default_content && !obj.data) { data = default_content; }
+                    else { data = obj.data; }
+
+                    return '<div class="yo-rate-item">' + data + '</div>';
                 }
             };
 
-            var items = key.split('_');
-            if(!items) { return build_item( { rate: 'N/A' } ); }
+            var YYYY_MM_DD = function(key) {
+                // Reformats '0_25_2015' to be a readable date '2015-01-25'.
+                var items = key.split('_');
+                if(!items) { return 'YYYY-MM-DD'; }
 
-            items[0] = parseInt(items[0], 10) + 1;
-            var key_month = (items[0] < 10) ? ('0' + items[0]) : items[0];
-            var key_day = (items[1] < 10) ? ('0' + items[1]) : items[1];
-            var content_date = items[2] + '-' + key_month + '-' + key_day;
+                items[0] = parseInt(items[0], 10) + 1;
+                var key_month = (items[0] < 10) ? ('0' + items[0]) : items[0];
+                var key_day = (items[1] < 10) ? ('0' + items[1]) : items[1];
+                return items[2] + '-' + key_month + '-' + key_day;
+            };
 
             // NOTE: This loop is inefficient, however for our immediate
             // purposes, cell_content is only going to have 365 elements
             // which is one year of rates.
             for(var i = 0; i < cfg.cell_content.length; i++) {
-                if(cfg.cell_content[i].date === content_date) {
-                    var rate = cfg.cell_content[i].data;
-                    var los = cfg.cell_content[i].los;
-                    return build_item( { rate: rate, los: los } );
+                if(cfg.cell_content[i].date === YYYY_MM_DD(key)) {
+                    var cell_data = cfg.cell_content[i].data;
+                    return build_item( { data: cell_data });
                 }
             }
+
             if(cfg.use_custom_content) {
-                return build_item( { rate: '' } );
+                return build_item( { data: cfg.custom_content_default } );
             } else {
-                return build_item( { rate: 'N/A' } );
+                return build_item( { data: 'N/A' } );
             }
         },
 
@@ -456,8 +449,8 @@ var yodatepicker = function(options) {
         var the_day   = (_dd < 10) ? '0' + _dd : _dd.toString();
 
         var formatted_date = (cfg.locale === 'en') ?
-                             the_month + "/" + the_day + "/" + _yy :
-                             the_day + "/" + the_month + "/" + _yy;
+                             the_month + '/' + the_day + '/' + _yy :
+                             the_day + '/' + the_month + '/' + _yy;
 
         if(cfg.display_date_format === 'ddd, MMM Do, YYYY') {
             /* example: Fri, Oct 31, 2019 */
